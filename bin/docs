@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+# ソースコードのコメント (YARD) と README から作ったドキュメントを http://localhost:8808 で表示する。
+# ファイルを変更したら、ブラウザを再読み込みすれば反映される。設定は .yardopts にある。
+#
+# 中身は `bundle exec yard server --reload --bind 127.0.0.1` に、次の 1 点を補ったもの。
+require "bundler/setup"
+require "yard"
+
+# YARD のサーバーはプロジェクト内のファイルをそのまま配信するので、
+# 自分のマシンからだけ見られるよう 127.0.0.1 で待ち受けたい。ところが WEBrick 用のアダプタは
+# --bind の値を WEBrick に渡さず、すべてのネットワークで待ち受けてしまう。そこで WEBrick の
+# 設定名 (BindAddress) に入れ直す。
+module BindWebrickToHost
+  def start
+    server_options[:BindAddress] ||= server_options[:Host]
+    super
+  end
+end
+YARD::Server::WebrickAdapter.prepend(BindWebrickToHost)
+
+YARD::CLI::Server.run("--reload", "--bind", "127.0.0.1", *ARGV)

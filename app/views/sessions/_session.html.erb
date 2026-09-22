@@ -1,0 +1,20 @@
+<%#
+  ログイン履歴の 1 行。
+
+  locals:
+    session - 表示する Session (モデル)。このパーシャルの中では、同名のヘルパー (Cookie のセッション) より
+              このローカル変数が優先される。ここで Cookie のセッションを使うことはない。
+
+  今のブラウザのログイン (Current.session) には印を付ける。
+  日時の書式は rails-i18n の time.formats.short による。
+%>
+<li id="<%= dom_id(session) %>" class="flex flex-col gap-1 px-4 py-3 text-sm">
+  <div class="flex items-center gap-2">
+    <span class="font-medium"><%= l(session.created_at, format: :short) %></span>
+    <% if session == Current.session %>
+      <span class="rounded-full bg-indigo-50 px-2 py-0.5 text-xs text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300"><%= t(".current") %></span>
+    <% end %>
+  </div>
+  <span class="text-gray-500"><%= Session.human_attribute_name(:ip_address) %>: <%= session.ip_address %></span>
+  <span class="truncate text-gray-500"><%= Session.human_attribute_name(:user_agent) %>: <%= session.user_agent %></span>
+</li>

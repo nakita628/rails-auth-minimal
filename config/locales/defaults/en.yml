@@ -1,0 +1,15 @@
+# アプリ全体で使う文言 (英語)。
+en:
+  # 言語の切り替えリンク (レイアウト) に出す、その言語自身での名前
+  language: "English"
+  # テーブルの列ではない属性の名前。prisma/schema.prisma には書けず、hekireki が生成する
+  # config/locales/models/ にも入らないので、ここで補う。
+  # - user.password / password_confirmation: has_secure_password が User に足す仮想属性
+  # - session.user: belongs_to の関連。必須のエラーは列 (user_id) ではなく関連 (user) に付く
+  activerecord:
+    attributes:
+      session:
+        user: "User"
+      user:
+        password: "Password"
+        password_confirmation: "Password confirmation"

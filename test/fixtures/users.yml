@@ -1,0 +1,12 @@
+# テスト用のユーザー。テストからは users(:alice) のようにラベルで参照する。
+# パスワードはどちらも "password"。password_digest は平文では書けないので、bcrypt でハッシュ化した値を入れる
+# (アプリの has_secure_password が保存するのと同じ形)。
+<% password_digest = BCrypt::Password.create("password") %>
+
+alice:
+  email_address: alice@example.com
+  password_digest: <%= password_digest %>
+
+bob:
+  email_address: bob@example.com
+  password_digest: <%= password_digest %>

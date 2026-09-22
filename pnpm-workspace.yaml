@@ -1,0 +1,9 @@
+allowBuilds:
+  '@prisma/engines': true
+  prisma: true
+minimumReleaseAgeExclude:
+  - hekireki@0.32.0
+# node_modules には共有ストアからハードリンクせず、ファイルをコピーする。
+# この devcontainer のホスト側マウントでは、ハードリンクしたファイルの読み込みがときどき失敗するため
+# (ESTALE、"Unknown system error -116")。
+packageImportMethod: copy

@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "scripts": {
+    "postinstall": "prisma generate",
+    "db:push": "prisma db push && prisma generate",
+    "db:generate": "prisma generate",
+    "db:reset": "prisma db push --force-reset && prisma generate"
+  },
+  "devDependencies": {
+    "hekireki": "0.32.0",
+    "prisma": "8.1.0-dev.7"
+  }
+}

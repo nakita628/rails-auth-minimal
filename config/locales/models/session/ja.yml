@@ -1,0 +1,9 @@
+ja:
+  activerecord:
+    models:
+      session: "セッション"
+    attributes:
+      session:
+        user_id: "ユーザー"
+        ip_address: "IP アドレス"
+        user_agent: "ブラウザ"

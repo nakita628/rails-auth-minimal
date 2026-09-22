@@ -1,0 +1,47 @@
+<%#
+  アカウント登録画面。
+
+  フォームは User に結びつける (form_with model:) ので、値は user[email_address] のように送られ、
+  RegistrationsController#user_params が params.expect(user: ...) で取り出す。
+  URL は resource :registration のものにする (User には resources がないため)。
+
+  エラーは項目ごとではなくまとめて上に出す。項目名とメッセージのつなぎ方は rails-i18n の errors.format による。
+  失敗時は 422 でこの画面を描き直す (RegistrationsController#create)。
+%>
+<% content_for :title, t(".title") %>
+
+<h1 class="mb-6 text-2xl font-bold"><%= t(".title") %></h1>
+
+<%= form_with model: @user, url: registration_path, class: "flex flex-col gap-4" do |form| %>
+  <% if @user.errors.any? %>
+    <div class="rounded-md bg-red-50 px-4 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-200" role="alert">
+      <ul>
+        <% @user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :email_address, class: "mb-1 block text-sm font-medium" %>
+    <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username",
+          class: "w-full rounded-md border border-gray-300 bg-white px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none dark:border-gray-700 dark:bg-gray-900" %>
+  </div>
+  <div>
+    <%= form.label :password, class: "mb-1 block text-sm font-medium" %>
+    <%= form.password_field :password, required: true, autocomplete: "new-password", maxlength: 72,
+          class: "w-full rounded-md border border-gray-300 bg-white px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none dark:border-gray-700 dark:bg-gray-900" %>
+  </div>
+  <div>
+    <%= form.label :password_confirmation, class: "mb-1 block text-sm font-medium" %>
+    <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", maxlength: 72,
+          class: "w-full rounded-md border border-gray-300 bg-white px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none dark:border-gray-700 dark:bg-gray-900" %>
+  </div>
+  <%= form.submit t(".submit"), class: "cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500" %>
+<% end %>
+
+<p class="mt-6 text-sm text-gray-500">
+  <%= t(".have_account") %>
+  <%= link_to t(".sign_in"), new_session_path, class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
+</p>

@@ -1,0 +1,9 @@
+en:
+  activerecord:
+    models:
+      session: "Session"
+    attributes:
+      session:
+        user_id: "User"
+        ip_address: "IP address"
+        user_agent: "Browser"

@@ -1,0 +1,14 @@
+# ログインの画面 (app/views/sessions/) とコントローラ (SessionsController) の文言 (日本語)。
+# ビューの t(".title") やコントローラの t(".alert") は、sessions.<アクション>.<キー> を探す。
+ja:
+  sessions:
+    new:
+      title: "ログイン"
+      submit: "ログイン"
+      no_account: "アカウントがなければ"
+      sign_up: "登録する"
+    session:
+      current: "このブラウザ"
+    create:
+      alert: "メールアドレスかパスワードが違います。"
+      rate_limited: "しばらくしてからやり直してください。"

@@ -1,0 +1,7 @@
+# トップページ (app/views/home/) の文言 (英語)。
+en:
+  home:
+    index:
+      title: "Home"
+      signed_in_as: "You are signed in as %{email_address}."
+      sessions: "Your sessions"

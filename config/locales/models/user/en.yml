@@ -1,0 +1,14 @@
+en:
+  activerecord:
+    models:
+      user: "User"
+    attributes:
+      user:
+        email_address: "Email address"
+        password_digest: "Password digest"
+    errors:
+      models:
+        user:
+          attributes:
+            email_address:
+              taken: "has already been taken"

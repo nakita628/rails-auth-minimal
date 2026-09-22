@@ -1,0 +1,10 @@
+<%# ログイン後のトップページ。ログインが必要なページの例として、ユーザーのログイン履歴 (Session) を並べる。 %>
+<% content_for :title, t(".title") %>
+
+<h1 class="mb-2 text-2xl font-bold"><%= t(".title") %></h1>
+<p class="mb-6 text-gray-500"><%= t(".signed_in_as", email_address: Current.user.email_address) %></p>
+
+<h2 class="mb-2 text-lg font-semibold"><%= t(".sessions") %></h2>
+<ul id="sessions" class="divide-y divide-gray-200 rounded-lg border border-gray-200 bg-white dark:divide-gray-800 dark:border-gray-800 dark:bg-gray-900">
+  <%= render @sessions %>
+</ul>

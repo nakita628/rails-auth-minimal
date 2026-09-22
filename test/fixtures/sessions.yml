@@ -1,0 +1,8 @@
+# テスト用のログイン (Session)。テストからは sessions(:alice_laptop) のようにラベルで参照する。
+# user はラベルで書くと、fixtures が user_id に置き換える。
+
+# alice がノート PC からログインしたもの
+alice_laptop:
+  user: alice
+  ip_address: 127.0.0.1
+  user_agent: Mozilla/5.0 (Macintosh)

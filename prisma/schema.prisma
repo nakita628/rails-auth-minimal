@@ -1,0 +1,87 @@
+// データベースの唯一の定義。変更したら `pnpm db:push` を実行する。
+// hekireki が app/models/ に Active Record モデルを、config/locales/models/<モデル>/{ja,en}.yml に
+// モデル名・項目名・エラーメッセージの翻訳を書き出す (どちらも生成物なので編集しない)。
+//
+// テーブルの形は `bin/rails generate authentication` が作るマイグレーション
+// (users: email_address / password_digest、sessions: user_id / ip_address / user_agent) と同じにしている。
+//
+// `/// @ar.` は Rails の書き方そのままでモデルに入る (項目のバリデーション、モデルの has_secure_password や normalizes)。
+// `/// @ar.name` は名前の翻訳。どれも 1 行に書く。
+// 翻訳は Rails i18n ガイドのキー (activerecord.models / attributes / errors.models...) に書き出される
+// (https://guides.rubyonrails.org/i18n.html#translations-for-active-record-models)。
+// それ以外の `///` はこのスキーマの中だけの説明で、モデルや ER 図には入らない。
+
+datasource db {
+  provider = "sqlite"
+}
+
+generator Hekireki-ActiveRecord {
+  provider = "hekireki-activerecord"
+  output   = "../app/models"
+  // 翻訳の出力先 (output からの相対パス)。この下の models/<モデル>/<言語>.yml に書き出す
+  locales  = "../../config/locales"
+}
+
+// ER 図 (プロジェクトルートの er.png)。output は schema.prisma からの相対パス。
+generator Hekireki-ER {
+  provider = "hekireki-er"
+  output   = "../er.png"
+}
+
+/// ユーザー。メールアドレスとパスワードでログインする。
+///
+/// パスワードは平文では持たず、has_secure_password が bcrypt でハッシュ化して password_digest に入れる。
+/// これで `password` / `password_confirmation` の仮想属性と、`User.authenticate_by` が使えるようになる。
+/// メールアドレスは前後の空白を取り、小文字にそろえてから保存・検索する (normalizes)。
+/// @ar.name(ja: "ユーザー", en: "User")
+/// @ar.has_secure_password
+/// @ar.normalizes :email_address, with: ->(e) { e.strip.downcase }
+model User {
+  id             Int       @id @default(autoincrement())
+  /// ログインに使うメールアドレス。必須で、重複しない (DB にも一意制約がある)。
+  /// @ar.name(ja: "メールアドレス", en: "Email address")
+  /// @ar.uniqueness(message: { ja: "はすでに登録されています", en: "has already been taken" })
+  emailAddress   String    @unique @map("email_address")
+  /// パスワードの bcrypt ハッシュ。has_secure_password が `password` から作って入れる。
+  /// 空のパスワードは has_secure_password が `password` のエラーとして弾くので、
+  /// この列の presence は password が渡されたときだけにして、同じエラーが 2 回出ないようにしている。
+  /// @ar.name(ja: "パスワードのハッシュ", en: "Password digest")
+  /// @ar.presence(if: :password)
+  passwordDigest String    @map("password_digest")
+  /// 作成日時。Rails が保存時に設定する。
+  createdAt      DateTime  @default(now()) @map("created_at")
+  /// 更新日時。Rails が保存のたびに更新する。
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  /// このユーザーのログイン (Session)。ユーザーを消すとまとめて消える (onDelete: Cascade → dependent: :destroy)。
+  sessions       Session[]
+
+  @@map("users")
+}
+
+/// ログイン 1 回分。
+///
+/// ログインのたびに 1 件作り、その ID を署名付き Cookie (`session_id`) に入れてブラウザに渡す。
+/// 以後のリクエストは Cookie の ID でこの行を探し、ユーザーを特定する (Authentication#resume_session)。
+/// ログアウトでこの行を消せば、その Cookie は使えなくなる。
+/// @ar.name(ja: "セッション", en: "Session")
+/// @ar.scope :recent, -> { order(created_at: :desc, id: :desc) }
+model Session {
+  id        Int      @id @default(autoincrement())
+  /// ログインしたユーザー。
+  /// @ar.name(ja: "ユーザー", en: "User")
+  userId    Int      @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// ログインしたときの IP アドレス。どこからのログインかを見分けるための記録。
+  /// @ar.name(ja: "IP アドレス", en: "IP address")
+  ipAddress String?  @map("ip_address")
+  /// ログインしたときのブラウザ (User-Agent ヘッダー)。
+  /// @ar.name(ja: "ブラウザ", en: "Browser")
+  userAgent String?  @map("user_agent")
+  /// ログインした日時。Rails が保存時に設定する。
+  createdAt DateTime @default(now()) @map("created_at")
+  /// 更新日時。Rails が保存のたびに更新する。
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("sessions")
+}

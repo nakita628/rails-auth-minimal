@@ -1,0 +1,9 @@
+--title "rails-auth-minimal"
+--markup markdown
+--markup-provider redcarpet
+--private
+--load config/yard/japanese_summary.rb
+--output-dir doc
+app/**/*.rb
+-
+README.md

@@ -1,0 +1,5 @@
+# 全ページ共通のレイアウト (app/views/layouts/application.html.erb) の文言 (日本語)。
+ja:
+  layouts:
+    application:
+      sign_out: "ログアウト"

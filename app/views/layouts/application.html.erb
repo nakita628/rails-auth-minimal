@@ -1,0 +1,45 @@
+<%# 全ページ共通のレイアウト。言語の切り替え、ログアウト、エラーメッセージ (alert) もここで表示する。 %>
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <title><%= content_for(:title) || "rails-auth-minimal" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# app/assets/tailwind/application.css からビルドした app/assets/builds/tailwind.css を読み込む。
+        JavaScript は使わない (Hotwire なし)。フォームの送信も DELETE も、素の HTML フォームで動く %>
+    <%= stylesheet_link_tag :app %>
+  </head>
+
+  <body class="bg-gray-50 text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100">
+    <main class="mx-auto max-w-xl px-4 py-10">
+      <nav class="mb-4 flex items-center justify-between gap-3 text-sm">
+        <%# ログイン中ならメールアドレスとログアウトボタン。authenticated? は Authentication の helper_method %>
+        <div class="flex items-center gap-3">
+          <% if authenticated? %>
+            <span class="text-gray-500"><%= Current.user.email_address %></span>
+            <%# button_to は <form> を作り、hidden の _method=delete で DELETE を表す (Rack::MethodOverride)。JavaScript は要らない %>
+            <%= button_to t(".sign_out"), session_path, method: :delete,
+                  class: "cursor-pointer text-indigo-600 hover:underline dark:text-indigo-400" %>
+          <% end %>
+        </div>
+        <%# 言語の切り替え。今のページを別の言語で開き直す。表示中の言語はリンクにしない。
+            フォーム送信の失敗で描き直したページ (POST) は GET で開けないので、そのフォームの画面 (new) に戻す %>
+        <div class="flex gap-3">
+          <% I18n.available_locales.each do |locale| %>
+            <%= link_to_unless locale == I18n.locale, t("language", locale:),
+                  url_for(locale:, action: request.get? ? action_name : "new"),
+                  class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
+          <% end %>
+        </div>
+      </nav>
+      <% if alert %>
+        <p class="mb-4 rounded-md bg-red-50 px-4 py-2 text-sm text-red-800 dark:bg-red-950 dark:text-red-200" role="alert"><%= alert %></p>
+      <% end %>
+      <%= yield %>
+    </main>
+  </body>
+</html>

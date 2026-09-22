@@ -1,0 +1,29 @@
+<%#
+  ログイン画面。
+
+  フォームはモデルに結びつけず (form_with url:)、email_address と password をそのまま送る。
+  SessionsController#create が User.authenticate_by(params.permit(:email_address, :password)) に渡す。
+  autocomplete の値 (username / current-password) で、ブラウザのパスワード管理と連携する。
+%>
+<% content_for :title, t(".title") %>
+
+<h1 class="mb-6 text-2xl font-bold"><%= t(".title") %></h1>
+
+<%= form_with url: session_path, class: "flex flex-col gap-4" do |form| %>
+  <div>
+    <%= form.label :email_address, User.human_attribute_name(:email_address), class: "mb-1 block text-sm font-medium" %>
+    <%= form.email_field :email_address, value: params[:email_address], required: true, autofocus: true, autocomplete: "username",
+          class: "w-full rounded-md border border-gray-300 bg-white px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none dark:border-gray-700 dark:bg-gray-900" %>
+  </div>
+  <div>
+    <%= form.label :password, User.human_attribute_name(:password), class: "mb-1 block text-sm font-medium" %>
+    <%= form.password_field :password, required: true, autocomplete: "current-password", maxlength: 72,
+          class: "w-full rounded-md border border-gray-300 bg-white px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none dark:border-gray-700 dark:bg-gray-900" %>
+  </div>
+  <%= form.submit t(".submit"), class: "cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500" %>
+<% end %>
+
+<p class="mt-6 text-sm text-gray-500">
+  <%= t(".no_account") %>
+  <%= link_to t(".sign_up"), new_registration_path, class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
+</p>

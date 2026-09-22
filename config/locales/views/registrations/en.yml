@@ -1,0 +1,8 @@
+# アカウント登録の画面 (app/views/registrations/) の文言 (英語)。
+en:
+  registrations:
+    new:
+      title: "Sign up"
+      submit: "Sign up"
+      have_account: "Already have an account?"
+      sign_in: "Sign in"
